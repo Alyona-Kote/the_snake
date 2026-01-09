@@ -15,19 +15,19 @@ LEFT = (-1, 0)
 RIGHT = (1, 0)
 
 # Цвет фона - черный:
-BOARD_BACKGROUND_COLOR = (0, 0, 0)
+BOARD_BACKGROUND_COLOR = (80, 171, 83)
 
 # Цвет границы ячейки
 BORDER_COLOR = (93, 216, 228)
 
 # Цвет яблока
-APPLE_COLOR = (255, 0, 0)
+APPLE_COLOR = (224, 146, 188)
 
 # Цвет змейки
-SNAKE_COLOR = (0, 255, 0)
+SNAKE_COLOR = (237, 146, 92)
 
 # Скорость движения змейки:
-SPEED = 5
+SPEED = 3
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -66,6 +66,7 @@ class Apple(GameObject):
 
 class Snake(GameObject):
     def __init__(self):
+        super().__init__()
         self.length = 1
         self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
         self.direction = RIGHT
