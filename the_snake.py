@@ -27,7 +27,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 20
+SPEED = 5
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -41,7 +41,7 @@ clock = pygame.time.Clock()
 
 class GameObject:
     def __init__(self):
-        self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
+        self.position = (SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2)
         self.body_color = BOARD_BACKGROUND_COLOR
 
     def draw(self):
@@ -51,7 +51,8 @@ class GameObject:
 class Apple(GameObject):
 
     def randomize_position(self):
-        return (randint(0, GRID_WIDTH) * GRID_SIZE, randint(0, GRID_HEIGHT) * GRID_SIZE)
+        pos = (randint(0, GRID_WIDTH -1) * GRID_SIZE, randint(0, GRID_HEIGHT -1 ) * GRID_SIZE)
+        return pos
     
     def __init__(self):
         self.body_color = APPLE_COLOR
@@ -79,25 +80,27 @@ class Snake(GameObject):
             self.next_direction = None
 
     def move(self):
-        if self.direction == UP:
-            new_head = (self.positions[0][0], self.positions[0][1] - GRID_SIZE)
-        elif self.direction == DOWN:
-            new_head = (self.positions[0][0], self.positions[0][1] + GRID_SIZE)
-        elif self.direction == LEFT:
-            new_head = (self.positions[0][0] - GRID_SIZE, self.positions[0][1])
-        elif self.direction == RIGHT:
-            new_head = (self.positions[0][0] + GRID_SIZE, self.positions[0][1])
+        head_x, head_y = self.positions[0]
+        dx, dy = self.direction
 
-        # Добавляем новую голову в начало списка позиций
+        # Вычисляем новую позицию головы с учётом выхода за границы
+        new_x = (head_x + dx * GRID_SIZE) % SCREEN_WIDTH
+        new_y = (head_y + dy * GRID_SIZE) % SCREEN_HEIGHT
+
+        new_head = (new_x, new_y)
+
+        # Добавляем новую голову
         self.positions.insert(0, new_head)
 
-        # Если длина змейки не изменилась, удаляем последний элемент
+        # Если длина не изменилась — удаляем последний сегмент
         if len(self.positions) > self.length:
-            self.last = self.positions.pop()
+            self.last = self.positions.pop()  # Сохраняем для затирания
+        else:
+            self.last = None
 
 
     def draw(self):
-        for position in self.positions[:-1]:
+        for position in self.positions:
             rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
@@ -120,6 +123,7 @@ class Snake(GameObject):
         self.length = 1
         self.positions = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
+        self.last = None
 
 # Функция обработки действий пользователя
 def handle_keys(game_object):
@@ -145,7 +149,7 @@ def check_collision(snake, apple):
         # Проверка столкновения с яблоком
     if snake.get_head_position() == apple.position:
         snake.length += 1
-        apple.randomize_position()
+        apple.position = apple.randomize_position()
 
         # Проверка столкновений с собственным телом
     for pos in snake.positions[1:]:
@@ -155,6 +159,7 @@ def check_collision(snake, apple):
 
 def main():
     pygame.init()
+    screen.fill(BOARD_BACKGROUND_COLOR)
     snake = Snake()
     apple = Apple()
 
@@ -164,7 +169,9 @@ def main():
         snake.update_direction()
         snake.move()
         check_collision(snake, apple)
+        screen.fill(BOARD_BACKGROUND_COLOR)
         apple.draw()
+        snake.draw()
         pygame.display.update()
 
 
