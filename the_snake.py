@@ -39,11 +39,6 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-# Тут опишите все классы игры.
-##
-#
-#
-
 class GameObject:
     def __init__(self):
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
@@ -56,11 +51,11 @@ class GameObject:
 class Apple(GameObject):
 
     def randomize_position(self):
-        return (randint(0, 640), randint(0, 480))
+        return (randint(0, GRID_WIDTH) * GRID_SIZE, randint(0, GRID_HEIGHT) * GRID_SIZE)
     
     def __init__(self):
         self.body_color = APPLE_COLOR
-        self.position = randomize_position(self)
+        self.position = self.randomize_position()
     
     def draw(self):
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
@@ -71,7 +66,7 @@ class Apple(GameObject):
 class Snake(GameObject):
     def __init__(self):
         self.length = 1
-        self.positions = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
+        self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
         self.direction = RIGHT
         self.next_direction = None
         self.body_color = SNAKE_COLOR
@@ -84,12 +79,22 @@ class Snake(GameObject):
             self.next_direction = None
 
     def move(self):
-        get_head_position(self)
-        self.direction 
-        # обновляет позицию змейки (координаты каждой секции), добавляя новую 
-        # голову в начало списка positions и 
-        # удаляя последний элемент, 
-        # если длина змейки не увеличилась.
+        if self.direction == UP:
+            new_head = (self.positions[0][0], self.positions[0][1] - GRID_SIZE)
+        elif self.direction == DOWN:
+            new_head = (self.positions[0][0], self.positions[0][1] + GRID_SIZE)
+        elif self.direction == LEFT:
+            new_head = (self.positions[0][0] - GRID_SIZE, self.positions[0][1])
+        elif self.direction == RIGHT:
+            new_head = (self.positions[0][0] + GRID_SIZE, self.positions[0][1])
+
+        # Добавляем новую голову в начало списка позиций
+        self.positions.insert(0, new_head)
+
+        # Если длина змейки не изменилась, удаляем последний элемент
+        if len(self.positions) > self.length:
+            self.last = self.positions.pop()
+
 
     def draw(self):
         for position in self.positions[:-1]:
@@ -108,13 +113,13 @@ class Snake(GameObject):
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
     def get_head_position(self):
-        return positions[0]
+        return self.positions[0]
 
     def reset(self):
         # сбрасывает змейку в начальное состояние
         self.length = 1
         self.positions = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
-        self.direction = choice(UP, DOWN, LEFT, RIGHT)
+        self.direction = choice([UP, DOWN, LEFT, RIGHT])
 
 # Функция обработки действий пользователя
 def handle_keys(game_object):
@@ -135,24 +140,31 @@ def handle_keys(game_object):
 
 
 
+def check_collision(snake, apple):
+        # Тут опишите основную логику игры.
+        # Проверка столкновения с яблоком
+    if snake.get_head_position() == apple.position:
+        snake.length += 1
+        apple.randomize_position()
+
+        # Проверка столкновений с собственным телом
+    for pos in snake.positions[1:]:
+        if snake.get_head_position() == pos:
+            snake.reset()
+            break
 
 def main():
-    # Инициализация PyGame:
     pygame.init()
-    # Тут нужно создать экземпляры классов.
-    ...
+    snake = Snake()
+    apple = Apple()
 
     while True:
         clock.tick(SPEED)
-
-        # Тут опишите основную логику игры.
-        # ...handle_keys()
-        update_direction()
-        move()
-        #Проверяйте, съела ли змейка яблоко (если да, увеличьте длину змейки и 
-        # переместите яблоко). Проверяйте столкновения змейки с собой (если 
-        # столкновение, сброс игры при помощи метода reset()).
-        # Отрисовывайте змейку и яблоко, используя соответствующие методы draw.
+        handle_keys(snake)
+        snake.update_direction()
+        snake.move()
+        check_collision(snake, apple)
+        apple.draw()
         pygame.display.update()
 
 
