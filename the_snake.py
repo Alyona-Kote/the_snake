@@ -10,7 +10,7 @@ pygame.init()  # Инициализация библиотеки Pygame
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
-GRID_SIZE = 40
+GRID_SIZE = 40  # я изменила размер (х2), иначе не видно картинок
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
@@ -28,13 +28,11 @@ SNAKE_COLOR = (153, 51, 0)
 
 
 # Скорость движения змейки:
-SPEED = 3
+SPEED = 20
 
 
 def load_image(path, size):
-    """
-    Загрузка и масштабирование изображений.
-    """
+    """Загрузка и масштабирование изображений."""
     try:
         image = pygame.image.load(path)
         return pygame.transform.scale(image, size)
@@ -56,9 +54,8 @@ if SNAKE_BODY:
 if APPLE_IMAGE:
     APPLE_IMAGE = pygame.transform.scale(APPLE_IMAGE, (GRID_SIZE, GRID_SIZE))
 if background_image:
-    background = pygame.transform.scale(background_image, (SCREEN_WIDTH, 
+    background = pygame.transform.scale(background_image, (SCREEN_WIDTH,
                                                            SCREEN_HEIGHT))
-
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
