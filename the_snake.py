@@ -1,7 +1,6 @@
 from random import choice, randint
+
 import pygame
-
-
 """Игра «Ухожор».
 Цель: управлять Ван Гогом, подбирать отрезанные уши и творить шедевры.
 """
@@ -60,7 +59,7 @@ if background_image:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
 # Заголовок окна игрового поля:
-pygame.display.set_caption("Ван Ухожор")
+pygame.display.set_caption('Ван Ухожор')
 
 # Настройка времени:
 clock = pygame.time.Clock()
@@ -95,11 +94,10 @@ class Apple(GameObject):
         """Генерит случайную позицию для уха на поле. Возвращает случайные
         координаты (x, y) в пределах игрового поля.
         """
-        pos = (
+        return = (
             randint(0, GRID_WIDTH - 1) * GRID_SIZE,
             randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
         )
-        return pos
 
     def __init__(self):
         """Инициализация уха."""
@@ -252,7 +250,7 @@ def main():
         pygame.display.update()  # Обновляем содержимое окна
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     """Точка входа в программу.Проверяет, запущен ли скрипт напрямую
     (а не импортирован как модуль),
     и вызывает функцию main() для запуска игры.
