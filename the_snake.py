@@ -41,10 +41,10 @@ def load_image(path, size):
 
 
 # Откуда берём картинки
-SNAKE_HEAD = pygame.image.load("images/snake_head.png")
-SNAKE_BODY = pygame.image.load("images/snake_body.png")
-APPLE_IMAGE = pygame.image.load("images/apple.png")
-background_image = pygame.image.load("images/background.jpg")
+SNAKE_HEAD = pygame.image.load('images/snake_head.png')
+SNAKE_BODY = pygame.image.load('images/snake_body.png')
+APPLE_IMAGE = pygame.image.load('images/apple.png')
+background_image = pygame.image.load('images/background.jpg')
 
 # Масштабирование изображений под размер ячейки
 if SNAKE_HEAD:
@@ -54,12 +54,13 @@ if SNAKE_BODY:
 if APPLE_IMAGE:
     APPLE_IMAGE = pygame.transform.scale(APPLE_IMAGE, (GRID_SIZE, GRID_SIZE))
 if background_image:
-    background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    background = pygame.transform.scale(background_image, (
+        SCREEN_WIDTH, SCREEN_HEIGHT))
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
 # Заголовок окна игрового поля:
-pygame.display.set_caption("Ван Ухожор")
+pygame.display.set_caption('Ван Ухожор')
 
 # Настройка времени:
 clock = pygame.time.Clock()
