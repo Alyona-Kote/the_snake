@@ -1,10 +1,11 @@
 from random import choice, randint
 import pygame
-import os
+
 
 """Игра «Ухожор».
 Цель: управлять Ван Гогом, подбирать отрезанные уши и творить шедевры.
 """
+
 pygame.init()  # Инициализация библиотеки Pygame
 
 # Константы для размеров поля и сетки:
@@ -29,8 +30,11 @@ SNAKE_COLOR = (153, 51, 0)
 # Скорость движения змейки:
 SPEED = 3
 
-# Загрузка и масштабирование изображений
+
 def load_image(path, size):
+    """
+    Загрузка и масштабирование изображений.
+    """
     try:
         image = pygame.image.load(path)
         return pygame.transform.scale(image, size)
@@ -38,11 +42,12 @@ def load_image(path, size):
         return None
 
 
-# Loading graphics for snake and badger friends (obstacles).
+# Откуда берём картинки
 SNAKE_HEAD = pygame.image.load('images/snake_head.png')
 SNAKE_BODY = pygame.image.load('images/snake_body.png')
 APPLE_IMAGE = pygame.image.load('images/apple.png')
 background_image = pygame.image.load('images/background.jpg')
+
 # Масштабирование изображений под размер ячейки
 if SNAKE_HEAD:
     SNAKE_HEAD = pygame.transform.scale(SNAKE_HEAD, (GRID_SIZE, GRID_SIZE))
@@ -51,13 +56,14 @@ if SNAKE_BODY:
 if APPLE_IMAGE:
     APPLE_IMAGE = pygame.transform.scale(APPLE_IMAGE, (GRID_SIZE, GRID_SIZE))
 if background_image:
-    background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    background = pygame.transform.scale(background_image, (SCREEN_WIDTH, 
+                                                           SCREEN_HEIGHT))
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
 # Заголовок окна игрового поля:
-pygame.display.set_caption("УХОЖОР")
+pygame.display.set_caption("Ван Ухожор")
 
 # Настройка времени:
 clock = pygame.time.Clock()
@@ -175,18 +181,14 @@ class Snake(GameObject):
             pygame.draw.rect(screen, self.body_color, head_rect)
             pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
 
-        # Затирание последнего сегмента
-     #   if self.last:
-      #      last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-     #       pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
-
     def get_head_position(self):
         """Возвращает координаты головы Ван Гога."""
         return self.positions[0]
 
     def reset(self):
         """Сбрасывает Ван Гога в начальное состояние после столкновения:
-        удаляем картины и ставим обратно в центр."""
+        удаляем картины и ставим обратно в центр.
+        """
         self.length = 1
         self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
@@ -194,10 +196,7 @@ class Snake(GameObject):
 
 
 def handle_keys(game_object):
-    """Обрабатывает ввод с клавиатуры.
-    Args:
-        game_object (Snake): Ван Гог, которому передаются команды.
-    """
+    """Обрабатывает ввод с клавиатуры, Ван Гогу передаются команды."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -219,7 +218,7 @@ def check_collision(snake, apple):
         snake (Snake): Ван Гог.
         apple (Apple): ухо.
     """
-    # Проверка столкновения с ухом, Ван Гог вдохновён и творит шедевр
+    # Проверка столкновения с ухом, Ван Гог вдохновлён и творит шедевр
     if snake.get_head_position() == apple.position:
         snake.length += 1
         apple.position = apple.randomize_position()
@@ -231,33 +230,28 @@ def check_collision(snake, apple):
             break
 
 
-
 def main():
     """Основная функция игры — запускает игровой цикл."""
-    # Refreshing the screen.
+    # паримся с фоновым изображением
     screen.fill(BOARD_BACKGROUND_COLOR)
-    screen.blit(background, (0, 0))  # Заливаем экран фоновым цветом
+    screen.blit(background, (0, 0))
 
     snake = Snake()  # Создаём Ван Гога
     apple = Apple()  # Создаём ухо
 
     while True:  # Бесконечный игровой цикл
         clock.tick(SPEED)  # Снижаем скорость игры
-
-        handle_keys(snake)  # Обрабатываем нажатия клавиш
-        snake.update_direction()  # Обновляем направление движения Ван Гога
-        snake.move()  # Двигаем Ван Гога на один шаг
-        check_collision(snake, apple)  # Проверяем столкновения
-    #    screen.fill(BOARD_BACKGROUND_COLOR)  # Очищаем экран (заливаем фоном)
-    # Отрисовка
         screen.fill(BOARD_BACKGROUND_COLOR)  # Полная очистка экрана
         if background:
             screen.blit(background, (0, 0))
         else:
             screen.fill(BOARD_BACKGROUND_COLOR)
-
         apple.draw()  # Отрисовываем ухо
         snake.draw()  # Отрисовываем Ван Гога
+        handle_keys(snake)  # Обрабатываем нажатия клавиш
+        snake.update_direction()  # Обновляем направление движения Ван Гога
+        snake.move()  # Двигаем Ван Гога на один шаг
+        check_collision(snake, apple)  # Проверяем столкновения
         pygame.display.update()  # Обновляем содержимое окна
 
 
