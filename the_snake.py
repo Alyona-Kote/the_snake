@@ -1,14 +1,15 @@
 from random import choice, randint
 import pygame
+import os
 
 """Игра «Ухожор».
 Цель: управлять Ван Гогом, подбирать отрезанные уши и творить шедевры.
 """
-
+pygame.init()  # Инициализация библиотеки Pygame
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
-GRID_SIZE = 20
+GRID_SIZE = 40
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
@@ -28,19 +29,20 @@ SNAKE_COLOR = (153, 51, 0)
 # Скорость движения змейки:
 SPEED = 3
 
-# Загрузка изображений (поместите файлы в ту же папку, что и скрипт)
-try:
-    SNAKE_HEAD = pygame.image.load("snake_head.png").convert_alpha()
-    SNAKE_BODY = pygame.image.load("snake_body.png").convert_alpha()
-    APPLE_IMAGE = pygame.image.load("apple.png").convert_alpha()
-except pygame.error as e:
-    print(f"Ошибка загрузки изображений: {e}")
-    print("Используются цветные квадраты вместо изображений.")
-    SNAKE_HEAD = None
-    SNAKE_BODY = None
-    APPLE_IMAGE = None
+# Загрузка и масштабирование изображений
+def load_image(path, size):
+    try:
+        image = pygame.image.load(path)
+        return pygame.transform.scale(image, size)
+    except pygame.error:
+        return None
 
 
+# Loading graphics for snake and badger friends (obstacles).
+SNAKE_HEAD = pygame.image.load('images/snake_head.png')
+SNAKE_BODY = pygame.image.load('images/snake_body.png')
+APPLE_IMAGE = pygame.image.load('images/apple.png')
+background_image = pygame.image.load('images/background.jpg')
 # Масштабирование изображений под размер ячейки
 if SNAKE_HEAD:
     SNAKE_HEAD = pygame.transform.scale(SNAKE_HEAD, (GRID_SIZE, GRID_SIZE))
@@ -48,7 +50,8 @@ if SNAKE_BODY:
     SNAKE_BODY = pygame.transform.scale(SNAKE_BODY, (GRID_SIZE, GRID_SIZE))
 if APPLE_IMAGE:
     APPLE_IMAGE = pygame.transform.scale(APPLE_IMAGE, (GRID_SIZE, GRID_SIZE))
-
+if background_image:
+    background = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -173,9 +176,9 @@ class Snake(GameObject):
             pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
 
         # Затирание последнего сегмента
-        if self.last:
-            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-            pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
+     #   if self.last:
+      #      last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+     #       pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
     def get_head_position(self):
         """Возвращает координаты головы Ван Гога."""
@@ -228,20 +231,31 @@ def check_collision(snake, apple):
             break
 
 
+
 def main():
     """Основная функция игры — запускает игровой цикл."""
-    pygame.init()  # Инициализация библиотеки Pygame
-    screen.fill(BOARD_BACKGROUND_COLOR)  # Заливаем экран фоновым цветом
+    # Refreshing the screen.
+    screen.fill(BOARD_BACKGROUND_COLOR)
+    screen.blit(background, (0, 0))  # Заливаем экран фоновым цветом
+
     snake = Snake()  # Создаём Ван Гога
     apple = Apple()  # Создаём ухо
 
     while True:  # Бесконечный игровой цикл
         clock.tick(SPEED)  # Снижаем скорость игры
+
         handle_keys(snake)  # Обрабатываем нажатия клавиш
         snake.update_direction()  # Обновляем направление движения Ван Гога
         snake.move()  # Двигаем Ван Гога на один шаг
         check_collision(snake, apple)  # Проверяем столкновения
-        screen.fill(BOARD_BACKGROUND_COLOR)  # Очищаем экран (заливаем фоном)
+    #    screen.fill(BOARD_BACKGROUND_COLOR)  # Очищаем экран (заливаем фоном)
+    # Отрисовка
+        screen.fill(BOARD_BACKGROUND_COLOR)  # Полная очистка экрана
+        if background:
+            screen.blit(background, (0, 0))
+        else:
+            screen.fill(BOARD_BACKGROUND_COLOR)
+
         apple.draw()  # Отрисовываем ухо
         snake.draw()  # Отрисовываем Ван Гога
         pygame.display.update()  # Обновляем содержимое окна
