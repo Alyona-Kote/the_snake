@@ -1,3 +1,4 @@
+import sys
 from random import choice, randint
 import pygame as pg
 
@@ -58,7 +59,7 @@ SNAKE_BODY = load_image("images/snake_body.png", (GRID_SIZE, GRID_SIZE))
 class GameObject:
     """Базовый класс для всех игровых объектов."""
 
-    def __init__(self, color):
+    def __init__(self, color=BOARD_BACKGROUND_COLOR):
         """Инициализирует объект."""
         self.position = MIDDLE_OF_FIELD
         self.body_color = color
@@ -82,19 +83,20 @@ class GameObject:
 class Apple(GameObject):
     """Класс яблока (отрезанного уха), это объект для сбора."""
 
-    def __init__(self, color, busy=[]):
+    def __init__(self, color=APPLE_COLOR):
         """Инициализирует ухо."""
         super().__init__(color)
-        self.position = self.randomize_position(busy)
+        self.occupied_cells = [MIDDLE_OF_FIELD]
+        self.position = self.randomize_position()
 
-    def randomize_position(self, busy):
+    def randomize_position(self):
         """Генерирует случайную позицию, не занятую другими объектами."""
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                 randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
             )
-            if self.position not in busy:
+            if self.position not in self.occupied_cells:
                 break
         return self.position
 
@@ -106,7 +108,7 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс змейки (Ван Гога) — управляемого игрового объекта."""
 
-    def __init__(self, color):
+    def __init__(self, color=SNAKE_COLOR):
         """Инициализирует Ван Гога."""
         super().__init__(color)  # Вызов конструктора родительского класса
         self.positions = [self.position]  # Список позиций всех картин и головы
@@ -163,7 +165,7 @@ def handle_keys(game_object):
     for event in pg.event.get():  # Перебираем события
         if event.type == pg.QUIT:  # На выход шагом марш
             pg.quit()
-            raise SystemExit
+            sys.exit()
         elif event.type == pg.KEYDOWN:  # Если нажата клавиша..
             if event.key == pg.K_UP and game_object.direction != DOWN:
                 game_object.next_direction = UP
@@ -184,11 +186,18 @@ def check_collision(snake, apple):
     """
     if snake.get_head_position() == apple.position:
         snake.length += 1  # Ван Гог написал новую картину
-        apple.position = apple.randomize_position(snake.positions)
+        apple.randomize_position()
 
     if snake.get_head_position() in snake.positions[1:]:
         snake.reset()  # Сброс картин
-        apple.position = apple.randomize_position(snake.positions)
+        apple.randomize_position()
+
+
+def occupy_cells(snake, apple):
+    """Заполним атрибут уха актуальным списком занятых Ван Гогом ячеек.
+    Нужно, чтобы знать, куда ставить яблоко нельзя.
+    """
+    apple.occupied_cells = snake.positions
 
 
 def main():
@@ -200,20 +209,21 @@ def main():
     - контроль скорости игры.
     """
     snake = Snake(SNAKE_COLOR)  # Создаём Ван Гога
-    apple = Apple(APPLE_COLOR, snake.positions)  # Создаём ухо
+    apple = Apple(APPLE_COLOR)  # Создаём ухо
     while True:  # Бесконечный игровой цикл
         clock.tick(SPEED)  # Снижаем скорость игры
         if BACKGROUND_IMAGE:  # Отрисовываем фон
             screen.blit(BACKGROUND_IMAGE, SCREEN_TOPLEFT)
         else:
             screen.fill(BOARD_BACKGROUND_COLOR)
-
-        apple.draw(screen)  # Отрисовываем ухо
         snake.draw(screen)  # Отрисовываем Ван Гога
+        apple.draw(screen)  # Отрисовываем ухо
+        # occupy_cells(snake, apple)
         handle_keys(snake)  # Обрабатываем нажатия клавиш
         snake.update_direction()  # Обновляем направление движения Ван Гога
         snake.move()  # Двигаем Ван Гога на один шаг
         check_collision(snake, apple)  # Проверяем столкновения
+
         pg.display.update()  # Обновляем содержимое окна
 
 
