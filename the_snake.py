@@ -1,5 +1,8 @@
-import sys
+
 from random import choice, randint
+
+import sys
+
 import pygame as pg
 
 """Игра «Ухожор».
@@ -45,8 +48,7 @@ def load_image(path, size):
         image = pg.image.load(path)
         return pg.transform.scale(image, size)
     except pg.error as e:
-        print(f'Ошибка загрузки {path}: {e}')
-        return None
+        raise (f'Ошибка загрузки {path}: {e}')
 
 
 # откуда берём картинки
@@ -219,7 +221,7 @@ def main():
             screen.fill(BOARD_BACKGROUND_COLOR)
         snake.draw(screen)  # Отрисовываем Ван Гога
         apple.draw(screen)  # Отрисовываем ухо
-        # occupy_cells(snake, apple)
+        occupy_cells(snake, apple)
         handle_keys(snake)  # Обрабатываем нажатия клавиш
         snake.update_direction()  # Обновляем направление движения Ван Гога
         snake.move()  # Двигаем Ван Гога на один шаг
