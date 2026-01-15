@@ -84,22 +84,20 @@ class GameObject:
 class Apple(GameObject):
     """Класс яблока (отрезанного уха), это объект для сбора."""
 
-    def __init__(self, color=APPLE_COLOR):
+    def __init__(self, color=APPLE_COLOR, oc_cell=MIDDLE_OF_FIELD):
         """Инициализирует ухо."""
         super().__init__(color)
-        self.occupied_cells = [MIDDLE_OF_FIELD]
-        self.position = self.randomize_position()
+        self.randomize_position(oc_cell)
 
-    def randomize_position(self):
+    def randomize_position(self, oc_cell):
         """Генерирует случайную позицию, не занятую другими объектами."""
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                 randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
             )
-            if self.position not in self.occupied_cells:
+            if self.position not in oc_cell:
                 break
-        return self.position
 
     def draw(self, surface):
         """Отрисовывает ухо."""
@@ -155,7 +153,7 @@ class Snake(GameObject):
         Используется при столкновении с выставкой картин.
         """
         self.length = 1
-        self.positions = [MIDDLE_OF_FIELD]
+        self.positions = [self.position]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
 
 
@@ -185,20 +183,13 @@ def check_collision(snake, apple):
     - Если Ван Гог попал на свою выставку: сбрасываются все картины.
     Появляется новое ухо.
     """
-    if snake.get_head_position() == apple.position:
-        snake.length += 1  # Ван Гог написал новую картину
-        apple.randomize_position()
-
     if snake.get_head_position() in snake.positions[1:]:
         snake.reset()  # Сброс картин
-        apple.randomize_position()
+        apple.randomize_position(snake.positions)
 
-
-def occupy_cells(snake, apple):
-    """Заполним атрибут уха актуальным списком занятых Ван Гогом ячеек.
-    Нужно, чтобы знать, куда ставить яблоко нельзя.
-    """
-    apple.occupied_cells = snake.positions
+    elif snake.get_head_position() == apple.position:
+        snake.length += 1  # Ван Гог написал новую картину
+        apple.randomize_position(snake.positions)
 
 
 def main():
@@ -209,8 +200,8 @@ def main():
     - отрисовку всех элементов;
     - контроль скорости игры.
     """
-    snake = Snake(SNAKE_COLOR)  # Создаём Ван Гога
-    apple = Apple(APPLE_COLOR)  # Создаём ухо
+    snake = Snake()  # Создаём Ван Гога
+    apple = Apple()  # Создаём ухо
     while True:  # Бесконечный игровой цикл
         clock.tick(SPEED)  # Снижаем скорость игры
         if BACKGROUND_IMAGE:  # Отрисовываем фон
@@ -219,7 +210,6 @@ def main():
             screen.fill(BOARD_BACKGROUND_COLOR)
         snake.draw(screen)  # Отрисовываем Ван Гога
         apple.draw(screen)  # Отрисовываем ухо
-        occupy_cells(snake, apple)
         handle_keys(snake)  # Обрабатываем нажатия клавиш
         snake.update_direction()  # Обновляем направление движения Ван Гога
         snake.move()  # Двигаем Ван Гога на один шаг
