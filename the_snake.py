@@ -1,7 +1,6 @@
-
+import sys
 from random import choice, randint
 
-import sys
 
 import pygame as pg
 
@@ -48,7 +47,7 @@ def load_image(path, size):
         image = pg.image.load(path)
         return pg.transform.scale(image, size)
     except pg.error as e:
-        raise (f'Ошибка загрузки {path}: {e}')
+        raise Exception(f'Ошибка загрузки {path}: {e}')
 
 
 # откуда берём картинки
