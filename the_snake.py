@@ -1,5 +1,6 @@
 import sys
 from random import choice, randint
+
 import pygame as pg
 
 """Игра «Ухожор».
