@@ -34,8 +34,8 @@ clock = pg.time.Clock()  # контроль частоты кадров
 
 # Настройка игрового окна: размер окна, заголовок, фавиконка
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
-pg.display.set_caption("Ван Ухожор")  # Заголовок окна
-icon = pg.image.load("images/snake_body.png")
+pg.display.set_caption('Ван Ухожор')  # Заголовок окна
+icon = pg.image.load('images/snake_body.png')
 pg.display.set_icon(icon)  # Установка фавиконки окна
 
 
@@ -45,15 +45,16 @@ def load_image(path, size):
         image = pg.image.load(path)
         return pg.transform.scale(image, size)
     except pg.error as e:
-        print(f"Ошибка загрузки {path}: {e}")
+        print(f'Ошибка загрузки {path}: {e}')
         return None
 
 
 # откуда берём картинки
-BACKGROUND_IMAGE = load_image("images/background.jpg", (SCREEN_WIDTH, SCREEN_HEIGHT))
-APPLE_IMAGE = load_image("images/apple.png", (GRID_SIZE, GRID_SIZE))
-SNAKE_HEAD = load_image("images/snake_head.png", (GRID_SIZE, GRID_SIZE))
-SNAKE_BODY = load_image("images/snake_body.png", (GRID_SIZE, GRID_SIZE))
+BACKGROUND_IMAGE = load_image('images/background.jpg', (
+    SCREEN_WIDTH, SCREEN_HEIGHT))
+APPLE_IMAGE = load_image('images/apple.png', (GRID_SIZE, GRID_SIZE))
+SNAKE_HEAD = load_image('images/snake_head.png', (GRID_SIZE, GRID_SIZE))
+SNAKE_BODY = load_image('images/snake_body.png', (GRID_SIZE, GRID_SIZE))
 
 
 class GameObject:
@@ -77,7 +78,7 @@ class GameObject:
         """Абстрактный метод отрисовки объекта.
         Переопределяется в подклассах.
         """
-        raise NotImplementedError("Переопределяется в подклассах")
+        raise NotImplementedError('Переопределяется в подклассах')
 
 
 class Apple(GameObject):
@@ -227,7 +228,7 @@ def main():
         pg.display.update()  # Обновляем содержимое окна
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     """Точка входа в программу. Проверяет, запущен ли скрипт напрямую,
     а не импортирован как модуль,
     и вызывает функцию main() для запуска игры.
