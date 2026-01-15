@@ -1,7 +1,5 @@
 import sys
 from random import choice, randint
-
-
 import pygame as pg
 
 """Игра «Ухожор».
@@ -46,8 +44,8 @@ def load_image(path, size):
     try:
         image = pg.image.load(path)
         return pg.transform.scale(image, size)
-    except pg.error as e:
-        raise Exception(f'Ошибка загрузки {path}: {e}')
+    except pg.error:
+        return None
 
 
 # откуда берём картинки
