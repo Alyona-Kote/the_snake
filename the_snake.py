@@ -84,7 +84,7 @@ class GameObject:
 class Apple(GameObject):
     """Класс яблока (отрезанного уха), это объект для сбора."""
 
-    def __init__(self, color=APPLE_COLOR, oc_cell=(MIDDLE_OF_FIELD)):
+    def __init__(self, color=APPLE_COLOR, oc_cell=(MIDDLE_OF_FIELD,)):
         """Инициализирует ухо."""
         super().__init__(color)
         self.randomize_position(oc_cell)
